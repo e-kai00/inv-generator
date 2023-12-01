@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en-uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>iGenerator</title>
+</head>
+
+<body>
+    <main class="container">
+        <h1>Генератор інвойса</h1>
+
+        <!-- form input amount (uah) -->
+        <form id="input-form">
+            <input id="amount" type="text" name="amount" placeholder="наприклад: 32500.50">
+            <input id="submit-btn" type="button" value="Згенерувати">
+        </form>
+
+        <!-- generated rows of results -->
+        <div id="results"></div>
+
+        <!-- accept or re-generate new -->
+        <div class="btn-container">
+            <button id="regenerate">Повторити</button>
+            <button id="accept">Завантажити</button>
+        </div>
+
+
+        <!-- convert to pdf and download -->
+        <!-- <a href="#" id="download">Завантажити PDF</a> -->
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
