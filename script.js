@@ -1,10 +1,17 @@
 const form = document.getElementById('input-form');
 const amount = document.getElementById('amount');
 const results = document.getElementById('results');
+const priceContainer = document.querySelector('.price-container');
 // buttons
 const generateButton = document.getElementById('submit-btn');
 const acceptButton = document.getElementById('accept');
-const regenButton = document.getElementById('regenerate');
+const clearButton = document.getElementById('clear');
+
+const items = {    
+    "item1": [32.30, 34.30, 42.70, 44.70],    
+    "item2": [52.30, 54.30, 72.70, 74.70],    
+    "item3": [62.30, 64.30, 82.70, 84.70],  
+}
 
 
 // Event Listeners
@@ -12,20 +19,25 @@ generateButton.addEventListener('click', (e) => {
     e.preventDefault();
     if (validateInput()) {
         let initialAmount = parseFloat(amount.value);
-        displayResults(generate(initialAmount));
+        displayResults(generateRandomPrices(items, initialAmount));      
     }
 });
 
-regenButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (validateInput()) {
-        let initialAmount = parseFloat(amount.value);
-        displayResults(generate(initialAmount));
-    }
+clearButton.addEventListener('click', () => {
+    results.innerHTML = '';
+    amount.value = '';
 });
 
+acceptButton.addEventListener('click', () => {
 
-// Functions
+    if (results.innerHTML === '') {
+        alert('Спочатку сформуйте ціни.');
+        return;
+    } else {
+        generatePDF(results);
+    }    
+});
+
 
 // validate input
 function validateInput() {
@@ -37,62 +49,56 @@ function validateInput() {
     }
 }
 
-function generate(initialAmount) {    
 
-    // price boundries
-    const upperBound = 13034.01;
-    const lowerBound = 1178.28;
+function generateRandomPrices(items, targetAmount) {
 
-    let remainingAmount = initialAmount;
-    let singleItemPrice = [];
-    let include200 = false;
+    const itemNames = Object.keys(items);
+    const randomPrice = [];
+    let remainingAmount = targetAmount;
+    const include200 = false;
 
     while (remainingAmount > 0) {
-        // generate random number
-        let randomNum = Math.random() * (upperBound - lowerBound) + lowerBound;        
-        let roundedNum = parseFloat(randomNum.toFixed(2));            
-
-        // insure that only one number greater than 200 is included
-        if(roundedNum > 7296 && include200) {
-            continue;            
+        const randomItem = itemNames[Math.floor(Math.random() * itemNames.length)];        
+        const randomItemPrice = items[randomItem][Math.floor(Math.random() * items[randomItem].length)];
+        
+        // ensure randomItemPrice is less than remainingAmount
+        if (randomItemPrice > remainingAmount && remainingAmount >= 32.30) {
+            continue;
         }
-
-        if(roundedNum > 7296) {
-            include200 = true;
-        }        
-
-        // stop from going to negative
-        if (remainingAmount - roundedNum >= 0) {
-            singleItemPrice.push(roundedNum);
-            remainingAmount -= roundedNum;
+        // ensure randomItemPrice that the result will include only one price greater than 200
+        if (randomItemPrice > 200 && include200) {
+            continue;
+        }
+        if (randomItemPrice > 200) {
+            include200 = true;        
+        }       
+        // ensure price does not go to negative
+        if (remainingAmount - randomItemPrice >= 0) {
+            randomPrice.push(randomItemPrice);
+            remainingAmount -= randomItemPrice;            
         } else {
             break;
         }
     }
-    // add the remaining amount to the array
-    let sum = singleItemPrice.reduce((total, i) => total + i, 0);
-
-    let difference = parseFloat((initialAmount - sum).toFixed(2));    
-    if (difference > 110) {
-        singleItemPrice.push(difference);
-    } 
-    return singleItemPrice;
+    // add remaining amount adds the last item
+    if (remainingAmount > 0) {
+        randomPrice.push(parseFloat((remainingAmount).toFixed(2)));
+    }    
+    return randomPrice;
 }
 
 function displayResults(arr) {
-
+    
     results.innerHTML = '';
-    arr.forEach((item, index) => {
-        results.innerHTML += `<li>Кулон ${index + 1}: <span class="price">${item}</span> грн.</li>`
-    });
-
-    acceptButton.addEventListener('click', () => {
-        // html2pdf(results)
-        generatePDF(arr)
-    });
+    let htmlString = '<ul class="price-container">';
+    arr.forEach((price, index) => {
+        htmlString += `<li>Кулон ${index + 1}: <span class="price">${price}</span> $</li>`
+    });  
+    htmlString += '</ul>';
+    results.innerHTML = htmlString;
 }
 
-function generatePDF(arr) {
+function generatePDF(element) {
 
     // get current date
     const currentDate = new Date(); 
@@ -108,7 +114,7 @@ function generatePDF(arr) {
     results.appendChild(extraInfo);
 
     const pdfOptions = {
-        margin: 10,
+        margin: 1,
         filename: `invoice_${today}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
@@ -116,9 +122,8 @@ function generatePDF(arr) {
     };
 
     // Use html2pdf.js to generate the PDF
-    html2pdf(results, pdfOptions)
-        .from(arr)
-        .save();
+    html2pdf(element, pdfOptions)
+        
 }
 
 
