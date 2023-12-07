@@ -1,9 +1,14 @@
 const form = document.getElementById('input-form');
-const amount = document.getElementById('amount');
 const results = document.getElementById('results');
 const priceContainer = document.querySelector('.price-container');
+const invoiceAmount = document.getElementById('invoice-amount');
+// inputs
+const amount = document.getElementById('amount');
+const amountUSD = document.getElementById('usd');
+const amountRate = document.getElementById('rate');
 // buttons
 const generateButton = document.getElementById('submit-btn');
+const convertButton = document.getElementById('converter-btn');
 const acceptButton = document.getElementById('accept');
 const clearButton = document.getElementById('clear');
 
@@ -15,17 +20,32 @@ const items = {
 
 
 // Event Listeners
-generateButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (validateInput()) {
-        let initialAmount = parseFloat(amount.value);
-        displayResults(generateRandomPrices(items, initialAmount));      
+convertButton.addEventListener('click', () => {
+    if (validateInput()) {  
+        const initialAmount= convertCurrency(amountUSD.value, amountRate.value)   
+        invoiceAmount.innerHTML = initialAmount
+
+    // generate prices
+    const pricesUSD = generateRandomPrices(items, amountUSD.value);
+    // convert to uah
+    const pricesUAH = pricesUSD.map(obj => {
+        for (const item in obj) {
+            if (obj.hasOwnProperty(item)) {
+                return {[item]: convertCurrency(obj[item], amountRate.value)};
+            }
+        }
+    });
+    // display results
+    displayResults(pricesUAH);
+        
     }
 });
 
 clearButton.addEventListener('click', () => {
     results.innerHTML = '';
-    amount.value = '';
+    amountRate.value = '';
+    amountUSD.value = '';
+    invoiceAmount.innerHTML = '';
 });
 
 acceptButton.addEventListener('click', () => {
@@ -39,9 +59,9 @@ acceptButton.addEventListener('click', () => {
 });
 
 
-// validate input
+
 function validateInput() {
-    if (amount.value === '' || amount.value < 0) {
+    if (amountUSD.value === '' || amountUSD.value < 0 && amountRate.value === '' || amountRate.value < 0) {
         alert('Please enter a valid number');
         return false;
     } else {
@@ -49,6 +69,9 @@ function validateInput() {
     }
 }
 
+function convertCurrency(amountUSD, rate) {
+    return parseFloat((amountUSD * rate).toFixed(2));
+}
 
 function generateRandomPrices(items, targetAmount) {
 
@@ -65,7 +88,7 @@ function generateRandomPrices(items, targetAmount) {
         if (randomItemPrice > remainingAmount && remainingAmount >= 32.30) {
             continue;
         }
-        // ensure randomItemPrice that the result will include only one price greater than 200
+        // ensure the result will include only one price greater than 200
         if (randomItemPrice > 200 && include200) {
             continue;
         }
@@ -74,15 +97,15 @@ function generateRandomPrices(items, targetAmount) {
         }       
         // ensure price does not go to negative
         if (remainingAmount - randomItemPrice >= 0) {
-            randomPrice.push(randomItemPrice);
+            randomPrice.push({[randomItem]: randomItemPrice});
             remainingAmount -= randomItemPrice;            
         } else {
             break;
         }
     }
-    // add remaining amount adds the last item
+    // add remaining amount to the list
     if (remainingAmount > 0) {
-        randomPrice.push(parseFloat((remainingAmount).toFixed(2)));
+        randomPrice.push({'rest': parseFloat((remainingAmount).toFixed(2))});
     }    
     return randomPrice;
 }
@@ -91,9 +114,16 @@ function displayResults(arr) {
     
     results.innerHTML = '';
     let htmlString = '<ul class="price-container">';
-    arr.forEach((price, index) => {
-        htmlString += `<li>Кулон ${index + 1}: <span class="price">${price}</span> $</li>`
-    });  
+
+    arr.forEach(obj => {
+
+        for (const item in obj) {
+            if (obj.hasOwnProperty(item)) {
+                htmlString += `<li>${item}: <span class="price">${obj[item]}</span> грн</li>`;
+            }
+        } 
+})
+
     htmlString += '</ul>';
     results.innerHTML = htmlString;
 }
@@ -109,7 +139,7 @@ function generatePDF(element) {
 
     const extraInfo = document.createElement('div');
     extraInfo.classList.add('extra-info');
-    extraInfo.innerHTML = `<p>Сума: ${amount.value} грн.</p>
+    extraInfo.innerHTML = `<p>Сума: ${invoiceAmount.value} грн.</p>
                            <p>Дата: ${today}</p>`;
     results.appendChild(extraInfo);
 

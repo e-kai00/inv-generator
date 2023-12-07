@@ -10,30 +10,41 @@
 
 <body>
     <main class="container">
-        <h1>Генератор інвойса</h1>
+        <h1 class="heading">Генератор інвойса</h1>
 
-        <!-- form input amount (uah) -->
-        <form id="input-form">            
-            <input id="amount" type="text" name="amount" placeholder="Сума">            
-            <input id="submit-btn" type="button" value="Згенерувати">
+        <!-- input fields -->
+        <div>
+            <div class="converter input-container">
+                <input id="usd" class="display" type="text" name="usd" placeholder="$">
+                <input id="rate" class="display" type="text" name="usd" placeholder="Курс долара">
+                <input id="converter-btn" type="button" class="btn" value="Згенерувати">
+            </div>
             <p class="input-hint">Введіть суму в $. Наприклад: 750.70</p>
-        </form>
+        </div>
+        <div class="uah-container">
+            <div id="invoice-amount" class="display inside"></div>
+            <span>грн</span>
+        </div>
 
         <!-- generated rows of results -->
-        <div id="results"></div>
+        <div>
+            <div id="results"></div>
+        </div>
 
         <!-- accept or re-generate new -->
         <div class="btn-container">
-            <button id="clear">Очистити</button>
-            <button id="accept">Завантажити</button>
+            <button id="clear" class="btn">Очистити</button>
+            <button id="accept" class="btn">Завантажити</button>
         </div>
 
 
         <!-- convert to pdf and download -->
         <!-- <a href="#" id="download">Завантажити PDF</a> -->
-    </main> 
+    </main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
+        integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="script.js"></script>
 </body>
 
