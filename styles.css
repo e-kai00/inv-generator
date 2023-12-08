@@ -34,6 +34,13 @@ body {
   margin-bottom: 1em;
 }
 
+.warning-msg {
+  color: rgb(171, 26, 26);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: .5em;
+}
+
 .display {
   width: 6rem;
   height: 2rem;

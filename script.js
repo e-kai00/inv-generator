@@ -2,6 +2,7 @@ const form = document.getElementById('input-form');
 const results = document.getElementById('results');
 const priceContainer = document.querySelector('.price-container');
 const invoiceAmount = document.getElementById('invoice-amount');
+const warning = document.getElementsByClassName('warning-msg')[0];
 // inputs
 const amount = document.getElementById('amount');
 const amountUSD = document.getElementById('usd');
@@ -9,18 +10,37 @@ const amountRate = document.getElementById('rate');
 // buttons
 const generateButton = document.getElementById('submit-btn');
 const convertButton = document.getElementById('converter-btn');
-const acceptButton = document.getElementById('accept');
+const downloadButton = document.getElementById('accept');
 const clearButton = document.getElementById('clear');
 
 const items = {    
-    "item1": [32.30, 34.30, 42.70, 44.70],    
-    "item2": [52.30, 54.30, 72.70, 74.70],    
-    "item3": [62.30, 64.30, 82.70, 84.70],  
+    "Кулон 1": [3.47],    
+    "Кулон 10": [36.30, 45.30, 37.30, 46.30, 38.70, 47.70],    
+    "Кулон 11": [50.30, 65.30, 53.30, 68.30, 55.70, 70.70],  
+    "Кулон 12": [55.30, 82.30, 58.30, 85.30, 60.70, 87.70],  
+    "Кулон 13": [59.30, 93.30, 62.30, 96.30, 64.70, 98.70],  
+    "Кулон 14": [32.30, 35.30, 37.70],  
+    "Кулон 15": [57.30, 59.70],  
+    "Кулон 16": [159.70, 179.70],  
+    "Кулон 17": [357.30],  
+    "Кулон 18": [51.30, 76.30],  
+    "Кулон 19": [70.30, 142.30, 73.30, 145.30, 75.70, 147.70],  
+    "Кулон 20": [85.30, 155.30, 88.30, 158.30, 90.70, 160.70],  
+    "Кулон 21": [53.00, 80.00],  
+    "Кулон 22": [239.30, 259.30],
+    "Кулон 23": [38.70],
+    "Кулон 24": [42.70],
+    "Кулон 25": [47.30, 50.30],
+    "Кулон 26": [122.70],
+    "Кулон 27": [58.30, 79.70, 59.00, 81.00],
+    "Кулон 28": [73.30, 134.70],
 }
 
 
 // Event Listeners
 convertButton.addEventListener('click', () => {
+    warning.innerHTML = '';
+
     if (validateInput()) {  
         const initialAmount= convertCurrency(amountUSD.value, amountRate.value)   
         invoiceAmount.innerHTML = initialAmount
@@ -46,12 +66,13 @@ clearButton.addEventListener('click', () => {
     amountRate.value = '';
     amountUSD.value = '';
     invoiceAmount.innerHTML = '';
+    warning.innerHTML = '';
 });
 
-acceptButton.addEventListener('click', () => {
+downloadButton.addEventListener('click', () => {
 
     if (results.innerHTML === '') {
-        alert('Спочатку сформуйте ціни.');
+        warning.innerHTML = 'Спочатку сформуйте ціни.'
         return;
     } else {
         generatePDF(results);
@@ -59,11 +80,17 @@ acceptButton.addEventListener('click', () => {
 });
 
 
-
+// Functions
 function validateInput() {
-    if (amountUSD.value === '' || amountUSD.value < 0 && amountRate.value === '' || amountRate.value < 0) {
-        alert('Please enter a valid number');
-        return false;
+    const regex = /^\d+(\.\d{0,2})?$/;
+    // const regex = /^\d+\.\d+$/;
+
+    if (amountUSD.value === '' || parseFloat(amountUSD.value) < 0 || amountRate.value === '' || parseFloat(amountRate.value) < 0) {
+        warning.innerHTML = 'Сума має бути більше 0';
+        return false;        
+    } else if (!regex.test(amountUSD.value) || !regex.test(amountRate.value)) {
+        warning.innerHTML = 'Формат суми має бути 750.70 або 750';
+        return false; 
     } else {
         return true;
     }
@@ -78,7 +105,7 @@ function generateRandomPrices(items, targetAmount) {
     const itemNames = Object.keys(items);
     const randomPrice = [];
     let remainingAmount = targetAmount;
-    const include200 = false;
+    let include200 = false;
 
     while (remainingAmount > 0) {
         const randomItem = itemNames[Math.floor(Math.random() * itemNames.length)];        
@@ -105,7 +132,7 @@ function generateRandomPrices(items, targetAmount) {
     }
     // add remaining amount to the list
     if (remainingAmount > 0) {
-        randomPrice.push({'rest': parseFloat((remainingAmount).toFixed(2))});
+        randomPrice.push({'Залишок': parseFloat((remainingAmount).toFixed(2))});
     }    
     return randomPrice;
 }
@@ -139,7 +166,7 @@ function generatePDF(element) {
 
     const extraInfo = document.createElement('div');
     extraInfo.classList.add('extra-info');
-    extraInfo.innerHTML = `<p>Сума: ${invoiceAmount.value} грн.</p>
+    extraInfo.innerHTML = `<p>Сума: ${invoiceAmount.textContent} грн.</p>
                            <p>Дата: ${today}</p>`;
     results.appendChild(extraInfo);
 
