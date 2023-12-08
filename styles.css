@@ -74,14 +74,6 @@ body {
   font-size: .8rem;
 }
 
-/* #invoice-amount {
-  padding: .5em;
-  margin: .8em 0;
-  border-radius: 5px;
-  border: 1px solid #003049;
-  font-size: 1em;
-} */
-
 .btn-container {
     margin: .8em .8em;
 }
@@ -117,4 +109,31 @@ li {
 .extra-info {
     margin-top: 3em;
     font-size: .9rem;
+}
+
+
+/* ------------------------------------------ media queries */
+
+@media screen and (max-width: 420px) {
+  .input-container {
+    display: flex;
+    gap: 1em;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .input-hint {
+    display: none;
+  }
+
+  .display {
+    width: 50vw;
+  }
+
+  .uah-container {
+    align-items: center;
+    flex-direction: column;
+    margin-top: 1em;
+  }
+
 }
