@@ -14,7 +14,7 @@ const downloadButton = document.getElementById('accept');
 const clearButton = document.getElementById('clear');
 
 const items = {    
-    "Кулон 1": [3.47],    
+    "Шнурок": [3.47],    
     "Кулон 10": [36.30, 45.30, 37.30, 46.30, 38.70, 47.70],    
     "Кулон 11": [50.30, 65.30, 53.30, 68.30, 55.70, 70.70],  
     "Кулон 12": [55.30, 82.30, 58.30, 85.30, 60.70, 87.70],  
