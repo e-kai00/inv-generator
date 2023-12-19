@@ -82,14 +82,14 @@ downloadButton.addEventListener('click', () => {
 
 // Functions
 function validateInput() {
-    const regex = /^\d+(\.\d{0,2})?$/;
+    const regex = /^\d+(\.\d{0,4})?$/;
     // const regex = /^\d+\.\d+$/;
 
     if (amountUSD.value === '' || parseFloat(amountUSD.value) < 0 || amountRate.value === '' || parseFloat(amountRate.value) < 0) {
         warning.innerHTML = 'Сума має бути більше 0';
         return false;        
     } else if (!regex.test(amountUSD.value) || !regex.test(amountRate.value)) {
-        warning.innerHTML = 'Формат суми має бути 750.70 або 750';
+        warning.innerHTML = 'Формат суми має бути 750.70 та не перевищувати 4 знаки після десяткової точки, напр.: 750.7024';
         return false; 
     } else {
         return true;
